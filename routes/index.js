@@ -23,7 +23,7 @@ exports.index = function(req, res){
       for(var i = 0; i < userAchievements.length; i++) {
         achievements.push({
           name: $(userAchievements[i]).find('.name').text(),
-          image: $(userAchievements[i]).find('.badge').css('background-image').slice(4, -1)
+          image: 'http://www.codeacademy.com' + $(userAchievements[i]).find('.badge').css('background-image').slice(4, -1)
         });
       }
       json.achievements = achievements;
