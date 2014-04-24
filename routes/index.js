@@ -7,7 +7,7 @@ exports.index = function(req, res){
   var requestObject = {
     uri: 'http://www.codeacademy.com/' + username,
     method: 'GET',
-    timeout: 10000,
+    timeout: 50000,
     followRedirect: true,
     maxRedirects: 10  
   };
@@ -18,12 +18,11 @@ exports.index = function(req, res){
       var $ = cheerio.load(html);
         
       // get achievement badges
-      var userAchievements = $('.achievement');
+      var userAchievements = $('.margin-top--1');
       var achievements = [];
       for(var i = 0; i < userAchievements.length; i++) {
         achievements.push({
-          name: $(userAchievements[i]).find('.name').text(),
-          image: 'http://www.codeacademy.com' + $(userAchievements[i]).find('.badge').css('background-image').slice(4, -1)
+          name: $(userAchievements[i]).text()
         });
       }
       json.achievements = achievements;
@@ -31,6 +30,7 @@ exports.index = function(req, res){
       res.json(json);
     }
     if(error) {
+      console.log(error);
       res.send({
         error: true,
         message: 'Sorry guys, I cannot convert for JSON for that username'
@@ -38,23 +38,23 @@ exports.index = function(req, res){
       return;
     }
     var $ = cheerio.load(html);
-    
     // get the full name and location
     var json = {
-      name: $('.full-name').text(),
-      location: $('.location-content').text()
+      name: $($('h3')[0]).text(),
+      bio: $($('p')[2]).text(),
+      location: $($('p')[1]).text()
     };
 
     // get point
     var points = $('.stat-count');
-    json.points = $(points[0]).text();
+    json.points = $($('h3')[4]).html();
 
     // get tracks
-    var userTracks = $('.track-progress');
+    var userTracks = $('.text--ellipsis');
     var tracks = [];
     for(var i = 0; i < userTracks.length; i++) {
       tracks.push({
-       title: $(userTracks[i]).find('.track-name').text(),
+       title: $(userTracks[i]).text(),
       });
     }
     json.tracks = tracks;
@@ -62,7 +62,7 @@ exports.index = function(req, res){
     var requestObject = {
       uri: 'http://www.codecademy.com/users/' + username + '/achievements',
       method: 'GET',
-      timeout: 10000,
+      timeout: 50000,
       followRedirect: true,
       maxRedirects: 10  
     };
